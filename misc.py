@@ -1,5 +1,5 @@
 # Various utilities
-# from pprint import pprint
+from pprint import pprint
 from random import choice
 
 
@@ -23,6 +23,17 @@ def read_fasta(filename):
 
         dnas[lines[label_idxs[n]][1:]] = ''.join(lines[slice_l:slice_r])
     return dnas
+
+
+def monoisotopic_mass_table():
+    mass_table = {'A': 71.03711 , 'C': 103.00919, 'D': 115.02694,
+                  'E': 129.04259, 'F': 147.06841, 'G': 57.02146,
+                  'H': 137.05891, 'I': 113.08406, 'K': 128.09496,
+                  'L': 113.08406, 'M': 131.04049, 'N': 114.04293,
+                  'P': 97.05276,  'Q': 128.05858, 'R': 156.10111,
+                  'S': 87.03203,  'T': 101.04768, 'V': 99.06841,
+                  'W': 186.07931, 'Y': 163.06333}
+    return mass_table
 
 
 def rna_codon_table():
@@ -66,16 +77,34 @@ def reverse(s):
     return s[::-1]
 
 
-def complement(s):
+def complement(s, acid='rna'):
     result = ''
-    table = {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}
+    if acid == 'rna':
+        table = {'A': 'U', 'U': 'A', 'C': 'G', 'G': 'C'}
+    elif acid == 'dna':
+        table = {'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C'}
     for e in s:
         result += table[e]
     return result
 
 
-def reverse_complement(s):
-    return complement(reverse(s))
+def reverse_complement(s, acid='rna'):
+    return complement(reverse(s), acid=acid)
+
+
+def is_transition(c1, c2):
+    if {c1, c2} == {'A', 'G'} or {c1, c2} == {'C', 'T'}:
+        return True
+    else:
+        return False
+
+
+def is_transversion(c1, c2):
+    if {c1, c2} == {'A', 'C'} or {c1, c2} == {'G', 'C'} or \
+       {c1, c2} == {'A', 'T'} or {c1, c2} == {'G', 'T'}:
+        return True
+    else:
+        return False
 
 
 def find_orf(s, acid='rna'):
@@ -147,7 +176,7 @@ def selection(array, k):
 
 
 # if __name__ == "__main__":
-#     t = dna_codon_table()
+#     t = None
 #     t = t.strip().split()
 #     print(t)
 #     bob = {}
