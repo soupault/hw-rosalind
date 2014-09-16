@@ -175,6 +175,47 @@ def selection(array, k):
         return v
 
 
+def depth_first_search(edges, verts):
+    def explore(v):
+        visited[verts.index(v)] = True
+        # PREVISIT(V)
+        for e in edges:
+            if v in e:
+                u = e[1 - e.index(v)]
+                if not visited[verts.index(u)]:
+                    explore(u)
+        # POSTVISIT(V)
+
+    visited = [False] * len(verts)
+    count = 0
+    for vert in verts:
+        if not visited[verts.index(vert)]:
+            explore(vert)
+            count += 1
+    print("Groups:", count)
+
+
+def check_bipartiteness(verts, edges, first_elem=1):
+    visited = [None] * len(verts)
+    colors = [None] * len(verts)
+    q = [first_elem]
+    colors[verts.index(first_elem)] = True
+    while q:
+        u = q.pop(0)
+        for edge in edges:
+            if u in edge:
+                v = edge[1 - edge.index(u)]
+                if colors[verts.index(v)] is not None and \
+                   colors[verts.index(u)] is not None and \
+                   colors[verts.index(v)] == colors[verts.index(u)]:
+                    return False
+                if visited[verts.index(v)] is None:
+                    q.append(v)
+                    visited[verts.index(v)] = True
+                    colors[verts.index(v)] = not colors[verts.index(u)]
+    return True
+
+
 # if __name__ == "__main__":
 #     t = None
 #     t = t.strip().split()
