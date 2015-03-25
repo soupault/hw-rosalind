@@ -1,18 +1,18 @@
-# Various utilities
-from pprint import pprint
+from collections import OrderedDict
 from random import choice
 
+# Various utilities
 
 def read_fasta(filename):
     """
     Read file in FASTA format.
     :param filename: full path to FASTA file
-    :return: dictionary with labels as 'keys' and genetic strings as 'values'
+    :return: OrderedDict with labels as 'keys' and genetic strings as 'values'
     """
     with open(filename) as f:
         lines = [e.strip() for e in f.readlines()]
 
-    dnas = dict()
+    dnas = OrderedDict()
     label_idxs = [idx for idx, line in enumerate(lines) if line.startswith('>')]
     for n in range(len(label_idxs)):
         slice_l = label_idxs[n] + 1
@@ -214,13 +214,3 @@ def check_bipartiteness(verts, edges, first_elem=1):
                     visited[verts.index(v)] = True
                     colors[verts.index(v)] = not colors[verts.index(u)]
     return True
-
-
-# if __name__ == "__main__":
-#     t = None
-#     t = t.strip().split()
-#     print(t)
-#     bob = {}
-#     for k, v in zip(t[0::2], t[1::2]):
-#         bob[k] = v
-#     pprint(bob)

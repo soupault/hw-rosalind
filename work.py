@@ -1,14 +1,15 @@
+import numpy as np
 from sort import *
 from misc import *
 
-# file_in = "input_small.txt"
-file_in = "input_large.txt"
+file_in = "input_small.txt"
+# file_in = "input_large.txt"
 file_out = "result.txt"
 
 if __name__ == "__main__":
     # ---------------------------- Get data ----------------------------------
-    with open(file_in) as f:
-        lines = [e.strip() for e in f.readlines()]
+    # with open(file_in) as f:
+    #     lines = [e.strip() for e in f.readlines()]
 
     # --- Input is an INTEGER
     # n = int(lines[0])
@@ -23,13 +24,19 @@ if __name__ == "__main__":
     # --- Input is an ARRAY OF STRINGS
     # s, t = [l for l in lines]
 
+    # --- Input is a FASTA-formatted file
+    dnas = read_fasta(file_in)
+
     # print(s, "\n", t, "\n")
+    # print(dnas)
     # quit()
+    
     # -------------------------- Main routine --------------------------------
     result = []
 
     # print(result)
     # quit()
+
     # --------------------------- Write data ---------------------------------
     with open(file_out, 'w') as f:
         pass
@@ -44,3 +51,6 @@ if __name__ == "__main__":
         # f.writelines(result)
         # --- Result is a SET OF STRINGS
         # f.writelines([line + "\n" for line in result])
+        # --- Result is a NUMPY ARRAY
+        for row in result:
+            f.writelines([' '.join("%.5f" % e for e in row), "\n"])
