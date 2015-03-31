@@ -3,6 +3,50 @@ from random import choice
 
 # Various utilities
 
+
+def read_graphs(filename, single=True):
+    """
+    Read graphs, presented in edge list format.
+    :param filename: full path to file
+    :param single: set to True if inpud data is a single graph.
+                   Otherwise, file has to include the number of graphs
+                   in the first string
+    :return: list of dictionaries, each with a list of 'vertices'
+             and a list of 'edges'
+    """
+    db = []
+
+    with open(filename) as f:
+        lines = [e.strip() for e in f.readlines()]
+
+    line_idx = 0
+    if single:
+        graphs_num = 1
+    else:
+        graphs_num = int(lines[line_idx].strip())
+        line_idx += 2
+
+    for graph_idx in range(graphs_num):
+        tmp = {'vertices': [], 'edges': []}
+
+        # Parse the string with numbers of vertices and edges
+        vert_num, edge_num = [int(e) for e in lines[line_idx].split()]
+        line_idx += 1
+
+        tmp['vertices'] = list(range(1, vert_num+1))
+
+        # Parse list of strings with edges
+        for edge_idx in range(edge_num):
+            tmp['edges'].append([int(e) for e in lines[line_idx].split()])
+            line_idx += 1
+
+        db.append(tmp)
+
+        # Skip empty string
+        line_idx += 1
+    return db
+
+
 def read_fasta(filename):
     """
     Read file in FASTA format.
@@ -214,3 +258,63 @@ def check_bipartiteness(verts, edges, first_elem=1):
                     visited[verts.index(v)] = True
                     colors[verts.index(v)] = not colors[verts.index(u)]
     return True
+
+
+def longest_common_subseq(a, b):
+    """
+    Find one of the longest common subsequences of two input strings
+    :param a: first string
+    :param b: second string
+    :return: longest common subsequence
+    """
+    lengths = [[0 for j in range(len(b)+1)] for i in range(len(a)+1)]
+    # row 0 and column 0 are initialized to 0 already
+    for i, x in enumerate(a):
+        for j, y in enumerate(b):
+            if x == y:
+                lengths[i+1][j+1] = lengths[i][j] + 1
+            else:
+                lengths[i+1][j+1] = \
+                    max(lengths[i+1][j], lengths[i][j+1])
+    # Read the substring out from the matrix
+    res = ""
+    x, y = len(a), len(b)
+    while x != 0 and y != 0:
+        if lengths[x][y] == lengths[x-1][y]:
+            x -= 1
+        elif lengths[x][y] == lengths[x][y-1]:
+            y -= 1
+        else:
+            assert a[x-1] == b[y-1]
+            res = a[x-1] + res
+            x -= 1
+            y -= 1
+    return res
+
+
+def shortest_common_superstr(a, b):
+    """
+    Find one of the shortest common superstrings of two input strings
+    :param a: first string
+    :param b: second string
+    :return: shortest common superstring
+    """
+    lcs = longest_common_subseq(a, b)
+    res = ""
+    idx_a, idx_b = 0, 0
+
+    for idx_lcs in range(len(lcs)):
+        while a[idx_a] != lcs[idx_lcs]:
+            res += a[idx_a]
+            idx_a += 1
+        idx_a += 1
+
+        while b[idx_b] != lcs[idx_lcs]:
+            res += b[idx_b]
+            idx_b += 1
+        idx_b += 1
+
+        res += lcs[idx_lcs]
+
+    res = res + a[idx_a:] + b[idx_b:]
+    return res
