@@ -47,6 +47,25 @@ def read_graphs(filename, single=True):
     return db
 
 
+def adj_list_to_adj_matrix(g):
+    """
+    Convert given graph from the form of adjacency list to the form
+     of adjacency matrix
+    :param g: Dict with 'edges' and 'vertices' keys
+    :return: Numpy array
+    """
+    import numpy as np
+
+    edges = g['edges']
+    vertices = g['vertices']
+
+    graph = np.zeros((len(vertices), len(vertices)))
+    for edge in edges:
+        v, u = edge
+        graph[v-1, u-1] = 1
+    return graph
+
+
 def read_fasta(filename):
     """
     Read file in FASTA format.
@@ -318,3 +337,30 @@ def shortest_common_superstr(a, b):
 
     res = res + a[idx_a:] + b[idx_b:]
     return res
+
+
+def build_heap(a):
+    """
+    Reorganize a vector of numbers to match the HEAP properties
+    :param a: List of numbers
+    :return: Same list of number in the form of linear heap representation
+    """
+    def bubble_up(h, idx):
+        parent = (idx - 1) // 2
+        curr_idx = idx
+
+        while True:
+            if parent < 0:
+                break
+            if h[parent] < h[curr_idx]:
+                h[curr_idx], h[parent] = h[parent], h[curr_idx]
+            else:
+                break
+            curr_idx, parent = parent, ((parent - 1) // 2)
+
+    b = []
+
+    for i in range(len(a)):
+        b.append(a[i])
+        bubble_up(b, i)
+    return b
